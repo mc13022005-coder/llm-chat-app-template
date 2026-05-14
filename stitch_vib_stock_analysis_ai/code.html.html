@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AIVANCE - VIB Ticker Analyst</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700;800&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-bright": "#3b383e",
+                        "surface-container-high": "#2b292f",
+                        "surface-dim": "#0f0d13",
+                        "secondary-fixed": "#e9ddff",
+                        "on-surface-variant": "#cbc4d2",
+                        "on-primary": "#381e72",
+                        "on-secondary": "#342b4b",
+                        "on-tertiary-container": "#503d00",
+                        "primary-fixed": "#e9ddff",
+                        "outline": "#948e9c",
+                        "inverse-surface": "#e6e0e9",
+                        "tertiary-fixed-dim": "#e7c365",
+                        "surface-container-highest": "#36343a",
+                        "inverse-on-surface": "#322f35",
+                        "tertiary": "#e7c365",
+                        "surface-tint": "#cfbcff",
+                        "on-tertiary-fixed-variant": "#594400",
+                        "surface-container": "#1d1b20",
+                        "secondary-fixed-dim": "#cdc0e9",
+                        "surface-variant": "#36343a",
+                        "tertiary-container": "#c9a74d",
+                        "background": "#0a0a0c",
+                        "on-tertiary": "#3e2e00",
+                        "inverse-primary": "#6750a4",
+                        "on-background": "#e6e0e9",
+                        "surface-container-low": "#1d1b20",
+                        "error": "#ffb4ab",
+                        "on-primary-fixed-variant": "#4f378a",
+                        "tertiary-fixed": "#ffdf93",
+                        "on-surface": "#e6e0e9",
+                        "primary-fixed-dim": "#cfbcff",
+                        "on-error-container": "#ffdad6",
+                        "on-secondary-fixed-variant": "#4b4263",
+                        "outline-variant": "#494551",
+                        "on-primary-container": "#e0d2ff",
+                        "surface": "#141218",
+                        "primary-container": "#6750a4",
+                        "secondary-container": "#4d4465",
+                        "error-container": "#93000a",
+                        "on-secondary-fixed": "#1f1635",
+                        "on-tertiary-fixed": "#241a00",
+                        "secondary": "#cdc0e9",
+                        "on-error": "#690005",
+                        "primary": "#cfbcff",
+                        "surface-container-lowest": "#0f0d13",
+                        "on-secondary-container": "#bfb2da",
+                        "on-primary-fixed": "#22005d"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "1rem",
+                        "2xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "unit": "4px",
+                        "margin-desktop": "40px",
+                        "margin-mobile": "16px",
+                        "max-width": "1440px"
+                    },
+                    "fontFamily": {
+                        "label-mono": ["JetBrains Mono"],
+                        "headline-lg-mobile": ["Hanken Grotesk"],
+                        "body-base": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "display-lg": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-card {
+            background: rgba(31, 41, 55, 0.15);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .ai-input-glow {
+            box-shadow: 0 0 40px -10px rgba(231, 195, 101, 0.2), 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .pulse-indicator {
+            width: 8px;
+            height: 8px;
+            background-color: #10b981;
+            border-radius: 50%;
+            position: relative;
+        }
+        .pulse-indicator::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            background-color: #10b981;
+            opacity: 0.4;
+            animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.5); opacity: 0.5; }
+            100% { transform: scale(2.5); opacity: 0; }
+        }
+        .ticker-animate {
+            animation: ticker-slide 15s linear infinite;
+        }
+        @keyframes ticker-slide {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-base antialiased overflow-hidden">
+<!-- Immersive Background Layers -->
+<div class="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
+<div class="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-[#064e3b]/10 blur-[120px] rounded-full"></div>
+<div class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-[#451a03]/10 blur-[120px] rounded-full"></div>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-[#0f172a]/40 blur-[100px] rounded-full"></div>
+</div>
+<!-- Minimal Sidebar Shell -->
+<aside class="h-full w-20 lg:w-64 flex flex-col fixed left-0 top-0 border-r border-white/5 bg-black/20 backdrop-blur-md z-50 transition-all duration-300">
+<div class="flex flex-col h-full py-8 px-4">
+<!-- Brand -->
+<div class="flex items-center gap-3 mb-10 px-2">
+<div class="w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center bg-gradient-to-br from-tertiary to-tertiary-container shadow-lg shadow-tertiary/10">
+<img alt="AIVANCE Logo" class="w-7 h-7 brightness-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBP9_0Sj9MqvoSRMOrfYuUsa6gpN4usEUeFK54k2jSyHjriwo2d8FPMBaOSrDB4ZeAIayeLp51cLRsLw_Sm5FTfBgQ6U-yK1mDu0jPRqZ2RAra-m1PFEB0XpAb9sN4dlt1ZRMbU2YYYhiI8BRJEvS8AUGYt25ovbqgT5T2lf0wICu7lq5LZEUQQPCNjOaW_f9M3U_HkEIdYaqfx3C_LXNtn82g-dlc2XRLndFpf7D2X81B8XKB6ZdA-AjBlVSA3t_8K_nIZLlRV1Lk"/>
+</div>
+<div class="hidden lg:block">
+<h1 class="font-headline-md text-lg font-bold text-on-surface tracking-tight leading-none">AIVANCE</h1>
+<p class="text-[10px] text-on-surface-variant font-medium uppercase tracking-[0.2em] mt-0.5">Fin-AI Analyst</p>
+</div>
+</div>
+<!-- Navigation Items -->
+<nav class="flex-1 space-y-1.5 scrollbar-hide overflow-y-auto">
+<a class="flex items-center gap-3 px-3 py-2.5 text-tertiary bg-white/5 font-semibold rounded-xl transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="chat">chat</span>
+<span class="hidden lg:block font-body-sm text-body-sm">New Session</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-all rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="explore">explore</span>
+<span class="hidden lg:block font-body-sm text-body-sm">Market Intel</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-all rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="database">database</span>
+<span class="hidden lg:block font-body-sm text-body-sm">Ticker Archive</span>
+</a>
+<div class="pt-8 mb-2 hidden lg:block">
+<span class="text-[10px] text-on-surface-variant uppercase tracking-[0.2em] px-3 opacity-40 font-bold">Watchlist</span>
+</div>
+<div class="hidden lg:block px-2">
+<div class="glass-card rounded-2xl p-4 border-none bg-white/5">
+<div class="flex justify-between items-center">
+<span class="font-bold text-sm">VIB</span>
+<span class="text-xs text-green-400 font-bold">+1.2%</span>
+</div>
+<div class="text-[10px] text-on-surface-variant mt-1">Market: 28,000 VND</div>
+</div>
+</div>
+</nav>
+<!-- User -->
+<div class="mt-auto space-y-1 pt-6 border-t border-white/5">
+<button class="w-full flex items-center gap-3 px-3 py-2.5 text-on-surface-variant hover:text-on-surface transition-all rounded-xl">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="hidden lg:block text-sm">Settings</span>
+</button>
+<div class="flex items-center gap-3 px-3 py-2 mt-2">
+<div class="w-8 h-8 rounded-full overflow-hidden ring-1 ring-white/10">
+<img alt="User Profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDo8L8rsWVVjHW7uVwvfur7CYdUtDttGsac7ZfYUadFh-h-Pd0_cHtnFSy87MwGme_wvX2SypmNCcp3ukIeBUtOQIVO9j6-Nz1Z83Mr2pwHcGu6F-D88UlGw6etGh2OVNwFCixKNWwhtEfBZpwsYOukVcXsdm9CvS8kKSJdRaofSKDZ9959x_mBvPQteMu17Q1XakGND6_tRf46rjF_DSRQJWIIEqoH5qnlJfQFF0U0e22oOM3VWI-P80qbXjEqjqSjrmm_ihqxVSk"/>
+</div>
+<div class="hidden lg:block overflow-hidden">
+<p class="text-sm font-semibold truncate text-on-surface">Premium User</p>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<!-- Top AppBar - Minimal Transparency -->
+<header class="fixed top-0 left-20 lg:left-64 right-0 h-16 z-40 flex items-center justify-between px-gutter">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 px-3 py-1 bg-white/5 rounded-full border border-white/5">
+<div class="pulse-indicator"></div>
+<span class="text-[10px] font-label-mono text-on-surface-variant uppercase tracking-widest">HOSE Real-time</span>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-6 overflow-hidden max-w-sm">
+<div class="flex gap-6 whitespace-nowrap ticker-animate text-[10px] font-label-mono text-on-surface-variant/60">
+<span>VIB <span class="text-green-400">28.0 (+1.2%)</span></span>
+<span>VNINDEX <span class="text-red-400">1,245 (-0.4%)</span></span>
+<span>VCB <span class="text-on-surface">92.1 (0.0%)</span></span>
+<span>VIB <span class="text-green-400">28.0 (+1.2%)</span></span>
+<span>VNINDEX <span class="text-red-400">1,245 (-0.4%)</span></span>
+<span>VCB <span class="text-on-surface">92.1 (0.0%)</span></span>
+</div>
+</div>
+<button class="w-9 h-9 flex items-center justify-center rounded-full hover:bg-white/5 text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-20 lg:ml-64 h-screen flex flex-col relative transition-all duration-300">
+<!-- Scrollable Chat Area -->
+<div class="flex-1 overflow-y-auto scrollbar-hide flex flex-col items-center">
+<!-- Welcome View (Initial State) -->
+<div class="w-full max-w-4xl px-gutter py-24 flex flex-col items-center text-center">
+<div class="mb-10 group cursor-default">
+<div class="w-20 h-20 mx-auto rounded-[2rem] bg-gradient-to-tr from-tertiary to-tertiary-container flex items-center justify-center shadow-2xl shadow-tertiary/20 group-hover:scale-105 transition-transform duration-500">
+<span class="material-symbols-outlined text-4xl text-on-tertiary" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</div>
+</div>
+<h2 class="font-display-lg text-4xl md:text-5xl lg:text-6xl text-on-surface mb-6 tracking-tight font-extrabold bg-clip-text text-transparent bg-gradient-to-b from-on-surface to-on-surface-variant">
+                    How can I help you <br class="hidden md:block"/> with VIB today?
+                </h2>
+<p class="font-body-base text-lg text-on-surface-variant/80 max-w-2xl mx-auto mb-16 leading-relaxed">
+                    AI-powered quantitative analysis and fundamental insights for Vietnam International Bank.
+                </p>
+<!-- Action Suggestions -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-2xl">
+<button class="glass-card group p-5 rounded-2xl text-left hover:bg-white/10 transition-all border-none flex items-center gap-4">
+<div class="w-10 h-10 rounded-xl bg-tertiary/10 flex items-center justify-center text-tertiary group-hover:bg-tertiary group-hover:text-on-tertiary transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="query_stats">query_stats</span>
+</div>
+<div>
+<div class="font-semibold text-on-surface text-sm">Điểm mạnh của VIB</div>
+<div class="text-xs text-on-surface-variant mt-0.5">Capital and retail dominance</div>
+</div>
+</button>
+<button class="glass-card group p-5 rounded-2xl text-left hover:bg-white/10 transition-all border-none flex items-center gap-4">
+<div class="w-10 h-10 rounded-xl bg-tertiary/10 flex items-center justify-center text-tertiary group-hover:bg-tertiary group-hover:text-on-tertiary transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="shield_with_heart">shield_with_heart</span>
+</div>
+<div>
+<div class="font-semibold text-on-surface text-sm">Định giá 2026</div>
+<div class="text-xs text-on-surface-variant mt-0.5">P/B and P/E forecasting</div>
+</div>
+</button>
+<button class="glass-card group p-5 rounded-2xl text-left hover:bg-white/10 transition-all border-none flex items-center gap-4">
+<div class="w-10 h-10 rounded-xl bg-tertiary/10 flex items-center justify-center text-tertiary group-hover:bg-tertiary group-hover:text-on-tertiary transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="warning">warning</span>
+</div>
+<div>
+<div class="font-semibold text-on-surface text-sm">Phân tích rủi ro</div>
+<div class="text-xs text-on-surface-variant mt-0.5">NPL and credit exposure</div>
+</div>
+</button>
+<button class="glass-card group p-5 rounded-2xl text-left hover:bg-white/10 transition-all border-none flex items-center gap-4">
+<div class="w-10 h-10 rounded-xl bg-tertiary/10 flex items-center justify-center text-tertiary group-hover:bg-tertiary group-hover:text-on-tertiary transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="compare_arrows">compare_arrows</span>
+</div>
+<div>
+<div class="font-semibold text-on-surface text-sm">So sánh ngành</div>
+<div class="text-xs text-on-surface-variant mt-0.5">Peer-to-peer benchmarking</div>
+</div>
+</button>
+</div>
+</div>
+</div>
+<!-- Floating Chat Input -->
+<div class="w-full max-w-4xl mx-auto p-gutter relative z-50">
+<div class="flex flex-wrap gap-2 justify-center mb-4">
+<button class="px-4 py-1.5 rounded-full bg-white/5 border border-white/5 text-[11px] font-medium text-on-surface-variant hover:bg-white/10 transition-colors">Compare with VCB</button>
+<button class="px-4 py-1.5 rounded-full bg-white/5 border border-white/5 text-[11px] font-medium text-on-surface-variant hover:bg-white/10 transition-colors">Q4 Financial Reports</button>
+<button class="px-4 py-1.5 rounded-full bg-white/5 border border-white/5 text-[11px] font-medium text-on-surface-variant hover:bg-white/10 transition-colors">Dividend History</button>
+</div>
+<div class="relative group ai-input-glow">
+<div class="glass-card rounded-2xl flex items-center p-3 gap-2 bg-white/[0.08] border-none shadow-2xl">
+<button class="p-2 text-on-surface-variant hover:text-tertiary transition-colors">
+<span class="material-symbols-outlined text-xl" data-icon="add_circle">add_circle</span>
+</button>
+<textarea class="flex-1 bg-transparent border-none focus:ring-0 text-on-surface py-2.5 resize-none scrollbar-hide max-h-48 text-base placeholder-on-surface-variant/40" placeholder="Ask AIVANCE anything about VIB..." rows="1"></textarea>
+<div class="flex gap-1">
+<button class="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-all rounded-xl">
+<span class="material-symbols-outlined text-xl" data-icon="mic">mic</span>
+</button>
+<button class="w-10 h-10 bg-tertiary text-on-tertiary rounded-xl flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-lg shadow-tertiary/20">
+<span class="material-symbols-outlined" data-icon="arrow_upward" style="font-variation-settings: 'wght' 700;">arrow_upward</span>
+</button>
+</div>
+</div>
+</div>
+<div class="text-center mt-4">
+<p class="text-[10px] font-label-mono text-on-surface-variant/40 uppercase tracking-widest">
+                    Enterprise AI Model optimized for Banking &amp; Finance Data
+                </p>
+</div>
+</div>
+</main>
+<!-- Background Elements -->
+<div class="fixed top-0 left-0 w-full h-full -z-20 pointer-events-none">
+<svg class="w-full h-full opacity-10" preserveaspectratio="none" viewbox="0 0 100 100">
+<defs>
+<pattern height="10" id="grid" patternunits="userSpaceOnUse" width="10">
+<path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" stroke-width="0.05"></path>
+</pattern>
+</defs>
+<rect fill="url(#grid)" height="100" width="100"></rect>
+</svg>
+</div>
+</body></html>
