@@ -13,7 +13,7 @@ import { Env, ChatMessage } from "./types";
 // https://developers.cloudflare.com/workers-ai/models/
 const MODEL_ID = "@cf/meta/llama-3.1-8b-instruct-fp8";
 
-const STOCK_API_BASE_URL = "http://localhost:8000";
+const STOCK_API_BASE_URL = "http://127.0.0.1:8000";
 
 // Default system prompt
 const SYSTEM_PROMPT =
@@ -98,6 +98,12 @@ async function handleChatRequest(
 
 					if (!stockRes.ok) {
 						let errorText = await stockRes.text();
+						
+						if (stockRes.status === 403 || errorText.includes("1003")) {
+							console.error(`[DEBUG] Bị Cloudflare chặn (403/1003): ${errorText}`);
+							throw new Error("Backend online chưa được cấu hình. Hiện tại bản web online chưa thể gọi backend local. Vui lòng deploy backend FastAPI lên Render/Railway rồi cấu hình STOCK_API_BASE_URL.");
+						}
+
 						try {
 							const errJson = JSON.parse(errorText);
 							if (errJson.error) errorText = errJson.error;
@@ -118,7 +124,11 @@ async function handleChatRequest(
 				} catch (err: any) {
 					console.error(`[ERROR] Lỗi gọi backend API cho mã ${symbol}:`, err);
 					
-					const errorMsg = err.message || "Lỗi không xác định khi lấy dữ liệu";
+					let errorMsg = err.message || "Lỗi không xác định khi lấy dữ liệu";
+					
+					if (errorMsg.includes("1003") || errorMsg.includes("403")) {
+						errorMsg = "Backend online chưa được cấu hình. Hiện tại bản web online chưa thể gọi backend local. Vui lòng deploy backend FastAPI lên Render/Railway rồi cấu hình STOCK_API_BASE_URL.";
+					}
 					
 					// Return SSE format directly without calling AI
 					const sseData = `data: ${JSON.stringify({ response: `Lỗi: ${errorMsg}` })}\n\ndata: [DONE]\n\n`;
