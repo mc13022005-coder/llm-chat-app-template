@@ -1,484 +1,348 @@
-<!doctype html>
-<html lang="vi">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>SSI Stock Assistant</title>
-		<!-- Include marked.js for markdown parsing -->
-		<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-		<style>
-			:root {
-				--primary: #f6821f;
-				--primary-hover: #e67e22;
-				--bg-main: #ffffff;
-				--bg-sidebar: #f9f9f9;
-				--bg-user: #ffffff;
-				--bg-assistant: #f3f4f6;
-				--border: #e5e7eb;
-				--text-main: #374151;
-				--text-muted: #6b7280;
-				--shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-			}
+<!DOCTYPE html>
 
-			* {
-				box-sizing: border-box;
-				margin: 0;
-				padding: 0;
-			}
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SSI Stock Assistant</title>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700;800&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-bright": "#3b383e",
+                        "surface-container-high": "#2b292f",
+                        "surface-dim": "#0f0d13",
+                        "secondary-fixed": "#e9ddff",
+                        "on-surface-variant": "#cbc4d2",
+                        "on-primary": "#381e72",
+                        "on-secondary": "#342b4b",
+                        "on-tertiary-container": "#503d00",
+                        "primary-fixed": "#e9ddff",
+                        "outline": "#948e9c",
+                        "inverse-surface": "#e6e0e9",
+                        "tertiary-fixed-dim": "#e7c365",
+                        "surface-container-highest": "#36343a",
+                        "inverse-on-surface": "#322f35",
+                        "tertiary": "#e7c365",
+                        "surface-tint": "#cfbcff",
+                        "on-tertiary-fixed-variant": "#594400",
+                        "surface-container": "#1d1b20",
+                        "secondary-fixed-dim": "#cdc0e9",
+                        "surface-variant": "#36343a",
+                        "tertiary-container": "#c9a74d",
+                        "background": "#0a0a0c",
+                        "on-tertiary": "#3e2e00",
+                        "inverse-primary": "#6750a4",
+                        "on-background": "#e6e0e9",
+                        "surface-container-low": "#1d1b20",
+                        "error": "#ffb4ab",
+                        "on-primary-fixed-variant": "#4f378a",
+                        "tertiary-fixed": "#ffdf93",
+                        "on-surface": "#e6e0e9",
+                        "primary-fixed-dim": "#cfbcff",
+                        "on-error-container": "#ffdad6",
+                        "on-secondary-fixed-variant": "#4b4263",
+                        "outline-variant": "#494551",
+                        "on-primary-container": "#e0d2ff",
+                        "surface": "#141218",
+                        "primary-container": "#6750a4",
+                        "secondary-container": "#4d4465",
+                        "error-container": "#93000a",
+                        "on-secondary-fixed": "#1f1635",
+                        "on-tertiary-fixed": "#241a00",
+                        "secondary": "#cdc0e9",
+                        "on-error": "#690005",
+                        "primary": "#cfbcff",
+                        "surface-container-lowest": "#0f0d13",
+                        "on-secondary-container": "#bfb2da",
+                        "on-primary-fixed": "#22005d"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "1rem",
+                        "2xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "unit": "4px",
+                        "margin-desktop": "40px",
+                        "margin-mobile": "16px",
+                        "max-width": "1440px"
+                    },
+                    "fontFamily": {
+                        "label-mono": ["JetBrains Mono"],
+                        "headline-lg-mobile": ["Hanken Grotesk"],
+                        "body-base": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "display-lg": ["Hanken Grotesk"],
+                        "headline-md": ["Hanken Grotesk"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-card {
+            background: rgba(31, 41, 55, 0.15);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .ai-input-glow {
+            box-shadow: 0 0 40px -10px rgba(231, 195, 101, 0.2), 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .pulse-indicator {
+            width: 8px;
+            height: 8px;
+            background-color: #10b981;
+            border-radius: 50%;
+            position: relative;
+        }
+        .pulse-indicator::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            background-color: #10b981;
+            opacity: 0.4;
+            animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.5); opacity: 0.5; }
+            100% { transform: scale(2.5); opacity: 0; }
+        }
+        .ticker-animate {
+            animation: ticker-slide 15s linear infinite;
+        }
+        @keyframes ticker-slide {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        /* Markdown styles */
+        .markdown-body p { margin-bottom: 0.75rem; }
+        .markdown-body p:last-child { margin-bottom: 0; }
+        .markdown-body ul, .markdown-body ol { margin-left: 1.5rem; margin-bottom: 0.75rem; list-style-type: disc; }
+        .markdown-body h1, .markdown-body h2, .markdown-body h3 { margin-top: 1.5rem; margin-bottom: 0.5rem; font-weight: bold; }
+        .markdown-body h1 { font-size: 1.5em; }
+        .markdown-body h2 { font-size: 1.25em; }
+        .markdown-body h3 { font-size: 1.1em; }
+        .markdown-body pre { background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem; overflow-x: auto; }
+        .markdown-body code { background: rgba(0,0,0,0.3); padding: 0.2rem 0.4rem; border-radius: 0.25rem; font-family: 'JetBrains Mono', monospace; font-size: 0.875em; }
+        .markdown-body pre code { background: transparent; padding: 0; }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-base antialiased overflow-hidden">
+<!-- Immersive Background Layers -->
+<div class="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
+<div class="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-[#064e3b]/10 blur-[120px] rounded-full"></div>
+<div class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-[#451a03]/10 blur-[120px] rounded-full"></div>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] bg-[#0f172a]/40 blur-[100px] rounded-full"></div>
+</div>
+<!-- Minimal Sidebar Shell -->
+<aside id="sidebar" class="h-full w-20 lg:w-64 flex flex-col fixed left-0 top-0 border-r border-white/5 bg-black/20 backdrop-blur-md z-50 transition-all duration-300">
+<div class="flex flex-col h-full py-8 px-4">
+<!-- Brand -->
+<div class="flex items-center gap-3 mb-10 px-2">
+<div class="w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center bg-gradient-to-br from-tertiary to-tertiary-container shadow-lg shadow-tertiary/10">
+<img alt="AIVANCE Logo" class="w-7 h-7 brightness-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBP9_0Sj9MqvoSRMOrfYuUsa6gpN4usEUeFK54k2jSyHjriwo2d8FPMBaOSrDB4ZeAIayeLp51cLRsLw_Sm5FTfBgQ6U-yK1mDu0jPRqZ2RAra-m1PFEB0XpAb9sN4dlt1ZRMbU2YYYhiI8BRJEvS8AUGYt25ovbqgT5T2lf0wICu7lq5LZEUQQPCNjOaW_f9M3U_HkEIdYaqfx3C_LXNtn82g-dlc2XRLndFpf7D2X81B8XKB6ZdA-AjBlVSA3t_8K_nIZLlRV1Lk"/>
+</div>
+<div class="hidden lg:block">
+<h1 class="font-headline-md text-lg font-bold text-on-surface tracking-tight leading-none">SSI Stock Assistant</h1>
+<p class="text-[10px] text-on-surface-variant font-medium uppercase tracking-[0.2em] mt-0.5">Trợ lý AI phân tích cổ phiếu</p>
+</div>
+<button id="toggle-sidebar" class="lg:hidden absolute right-[-40px] top-4 bg-surface-container p-2 rounded-r-xl border border-l-0 border-white/5 text-on-surface">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
+<!-- Navigation Items -->
+<nav class="flex-1 space-y-1.5 scrollbar-hide overflow-y-auto">
+<a class="flex items-center gap-3 px-3 py-2.5 text-tertiary bg-white/5 font-semibold rounded-xl transition-all cursor-pointer" onclick="location.reload()">
+<span class="material-symbols-outlined" data-icon="chat">chat</span>
+<span class="hidden lg:block font-body-sm text-body-sm">New Session</span>
+</a>
+<div class="pt-8 mb-2 hidden lg:block">
+<span class="text-[10px] text-on-surface-variant uppercase tracking-[0.2em] px-3 opacity-40 font-bold">Ví dụ mã cổ phiếu</span>
+</div>
+<div class="hidden lg:block px-2">
+<div class="glass-card rounded-2xl p-4 border-none bg-white/5">
+<div class="flex justify-between items-center">
+<span class="font-bold text-sm">VIB</span>
+<span class="text-xs text-green-400 font-bold">+1.2%</span>
+</div>
+<div class="text-[10px] text-on-surface-variant mt-1">Market: 28,000 VND</div>
+</div>
+</div>
+</nav>
+<!-- Auth Section -->
+<div class="mt-auto pt-6 border-t border-white/5">
+<!-- Logged Out State -->
+<div id="auth-logged-out" class="space-y-2">
+<button id="btn-login" class="w-full flex items-center justify-center gap-3 px-3 py-2.5 bg-white/10 hover:bg-white/20 text-on-surface transition-all rounded-xl font-medium">
+<span class="material-symbols-outlined text-xl" data-icon="login">login</span>
+<span class="hidden lg:block text-sm">Đăng nhập</span>
+</button>
+</div>
 
-			body {
-				font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-				line-height: 1.6;
-				color: var(--text-main);
-				background-color: var(--bg-main);
-				display: flex;
-				height: 100vh;
-				overflow: hidden;
-			}
+<!-- Logged In State (Hidden by default) -->
+<div id="auth-logged-in" class="hidden space-y-3">
+<div class="flex items-center gap-3 px-3">
+<div class="w-10 h-10 rounded-full overflow-hidden ring-2 ring-tertiary flex-shrink-0">
+<img id="user-avatar" alt="User Profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDo8L8rsWVVjHW7uVwvfur7CYdUtDttGsac7ZfYUadFh-h-Pd0_cHtnFSy87MwGme_wvX2SypmNCcp3ukIeBUtOQIVO9j6-Nz1Z83Mr2pwHcGu6F-D88UlGw6etGh2OVNwFCixKNWwhtEfBZpwsYOukVcXsdm9CvS8kKSJdRaofSKDZ9959x_mBvPQteMu17Q1XakGND6_tRf46rjF_DSRQJWIIEqoH5qnlJfQFF0U0e22oOM3VWI-P80qbXjEqjqSjrmm_ihqxVSk"/>
+</div>
+<div class="hidden lg:block overflow-hidden">
+<p id="user-name" class="text-sm font-bold truncate text-on-surface">Nguyễn Văn A</p>
+<p id="user-email" class="text-xs truncate text-on-surface-variant">nguyenvana@gmail.com</p>
+</div>
+</div>
+<button id="btn-logout" class="w-full flex items-center gap-3 px-3 py-2 text-error hover:bg-error/10 transition-all rounded-xl font-medium">
+<span class="material-symbols-outlined text-lg" data-icon="logout">logout</span>
+<span class="hidden lg:block text-sm">Đăng xuất</span>
+</button>
+</div>
+</div>
+</div>
+</aside>
+<!-- Top AppBar - Minimal Transparency -->
+<header class="fixed top-0 left-20 lg:left-64 right-0 h-16 z-40 flex items-center justify-between px-gutter bg-background/80 backdrop-blur-md border-b border-white/5">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 px-3 py-1 bg-white/5 rounded-full border border-white/5">
+<div class="pulse-indicator"></div>
+<span class="text-[10px] font-label-mono text-on-surface-variant uppercase tracking-widest">VNSTOCK DATA</span>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-6 overflow-hidden max-w-sm hidden md:flex">
+<div class="flex gap-6 whitespace-nowrap ticker-animate text-[10px] font-label-mono text-on-surface-variant/60">
+<span>VIB <span class="text-green-400">28.0 (+1.2%)</span></span>
+<span>VNINDEX <span class="text-red-400">1,245 (-0.4%)</span></span>
+<span>VCB <span class="text-on-surface">92.1 (0.0%)</span></span>
+<span>VIB <span class="text-green-400">28.0 (+1.2%)</span></span>
+<span>VNINDEX <span class="text-red-400">1,245 (-0.4%)</span></span>
+<span>VCB <span class="text-on-surface">92.1 (0.0%)</span></span>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-20 lg:ml-64 h-screen flex flex-col relative transition-all duration-300">
+<!-- Scrollable Chat Area -->
+<div id="chat-messages" class="flex-1 overflow-y-auto scrollbar-hide flex flex-col items-center w-full pt-16 pb-8">
+<!-- Welcome View (Initial State) -->
+<div id="welcome-screen" class="w-full max-w-4xl px-gutter py-24 flex flex-col items-center text-center mt-8">
+<div class="mb-10 group cursor-default">
+<div class="w-20 h-20 mx-auto rounded-[2rem] bg-gradient-to-tr from-tertiary to-tertiary-container flex items-center justify-center shadow-2xl shadow-tertiary/20 group-hover:scale-105 transition-transform duration-500">
+<span class="material-symbols-outlined text-4xl text-on-tertiary" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</div>
+</div>
+<h2 class="font-display-lg text-4xl md:text-5xl lg:text-6xl text-on-surface mb-6 tracking-tight font-extrabold bg-clip-text text-transparent bg-gradient-to-b from-on-surface to-on-surface-variant">
+                    Tôi có thể giúp gì <br class="hidden md:block"/> cho bạn hôm nay?
+                </h2>
+<p class="font-body-base text-lg text-on-surface-variant/80 max-w-2xl mx-auto mb-16 leading-relaxed">
+                    Trợ lý AI phân tích định lượng và cơ bản cho thị trường chứng khoán Việt Nam.
+                </p>
+<!-- Action Suggestions -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-2xl">
+<button class="glass-card group p-5 rounded-2xl text-left hover:bg-white/10 transition-all border-none flex items-center gap-4 suggestion-btn">
+<div class="w-10 h-10 rounded-xl bg-tertiary/10 flex items-center justify-center text-tertiary group-hover:bg-tertiary group-hover:text-on-tertiary transition-colors flex-shrink-0">
+<span class="material-symbols-outlined text-sm" data-icon="query_stats">query_stats</span>
+</div>
+<div>
+<div class="font-semibold text-on-surface text-sm">Phân tích mã VIB</div>
+<div class="text-xs text-on-surface-variant mt-0.5">Chi tiết kỹ thuật & cơ bản</div>
+</div>
+</button>
+<button class="glass-card group p-5 rounded-2xl text-left hover:bg-white/10 transition-all border-none flex items-center gap-4 suggestion-btn">
+<div class="w-10 h-10 rounded-xl bg-tertiary/10 flex items-center justify-center text-tertiary group-hover:bg-tertiary group-hover:text-on-tertiary transition-colors flex-shrink-0">
+<span class="material-symbols-outlined text-sm" data-icon="warning">warning</span>
+</div>
+<div>
+<div class="font-semibold text-on-surface text-sm">Rủi ro cổ phiếu HPG</div>
+<div class="text-xs text-on-surface-variant mt-0.5">Cảnh báo và phân tích</div>
+</div>
+</button>
+<button class="glass-card group p-5 rounded-2xl text-left hover:bg-white/10 transition-all border-none flex items-center gap-4 suggestion-btn">
+<div class="w-10 h-10 rounded-xl bg-tertiary/10 flex items-center justify-center text-tertiary group-hover:bg-tertiary group-hover:text-on-tertiary transition-colors flex-shrink-0">
+<span class="material-symbols-outlined text-sm" data-icon="info">info</span>
+</div>
+<div>
+<div class="font-semibold text-on-surface text-sm">Mã FPT của công ty nào?</div>
+<div class="text-xs text-on-surface-variant mt-0.5">Thông tin doanh nghiệp</div>
+</div>
+</button>
+<button class="glass-card group p-5 rounded-2xl text-left hover:bg-white/10 transition-all border-none flex items-center gap-4 suggestion-btn">
+<div class="w-10 h-10 rounded-xl bg-tertiary/10 flex items-center justify-center text-tertiary group-hover:bg-tertiary group-hover:text-on-tertiary transition-colors flex-shrink-0">
+<span class="material-symbols-outlined text-sm" data-icon="compare_arrows">compare_arrows</span>
+</div>
+<div>
+<div class="font-semibold text-on-surface text-sm">So sánh VCB và TCB</div>
+<div class="text-xs text-on-surface-variant mt-0.5">Phân tích tương quan</div>
+</div>
+</button>
+</div>
+</div>
+</div>
 
-			/* Sidebar */
-			.sidebar {
-				width: 260px;
-				background-color: var(--bg-sidebar);
-				border-right: 1px solid var(--border);
-				display: flex;
-				flex-direction: column;
-				height: 100%;
-				transition: transform 0.3s ease;
-				z-index: 50;
-			}
-
-			.sidebar-header {
-				padding: 1rem;
-				border-bottom: 1px solid var(--border);
-			}
-
-			.sidebar-header h2 {
-				font-size: 1.1rem;
-				font-weight: 600;
-				color: var(--primary);
-			}
-
-			.sidebar-header p {
-				font-size: 0.8rem;
-				color: var(--text-muted);
-			}
-
-			.new-chat-btn {
-				margin: 1rem;
-				padding: 0.75rem;
-				background-color: var(--bg-main);
-				border: 1px solid var(--border);
-				border-radius: 6px;
-				color: var(--text-main);
-				font-weight: 500;
-				cursor: pointer;
-				text-align: left;
-				transition: all 0.2s;
-				display: flex;
-				align-items: center;
-				gap: 0.5rem;
-			}
-
-			.new-chat-btn:hover {
-				background-color: var(--bg-assistant);
-			}
-
-			.chat-history {
-				flex: 1;
-				overflow-y: auto;
-				padding: 0 1rem;
-			}
-
-			.history-label {
-				font-size: 0.75rem;
-				color: var(--text-muted);
-				font-weight: 600;
-				margin: 1rem 0 0.5rem 0.5rem;
-			}
-
-			.history-item {
-				padding: 0.6rem 0.5rem;
-				font-size: 0.9rem;
-				border-radius: 6px;
-				cursor: pointer;
-				white-space: nowrap;
-				overflow: hidden;
-				text-overflow: ellipsis;
-				color: var(--text-main);
-			}
-
-			.history-item:hover {
-				background-color: var(--border);
-			}
-
-			.sidebar-footer {
-				padding: 1rem;
-				border-top: 1px solid var(--border);
-				font-size: 0.8rem;
-				color: var(--text-muted);
-				text-align: center;
-			}
-
-			/* Main Content */
-			.main-content {
-				flex: 1;
-				display: flex;
-				flex-direction: column;
-				position: relative;
-				height: 100%;
-			}
-
-			.desktop-header {
-				padding: 0.75rem 1.5rem;
-				border-bottom: 1px solid var(--border);
-				display: flex;
-				align-items: center;
-				background-color: var(--bg-main);
-				position: sticky;
-				top: 0;
-				z-index: 10;
-			}
-
-			.desktop-header .header-info {
-				display: flex;
-				align-items: center;
-				gap: 0.75rem;
-			}
-
-			.desktop-header h2 {
-				font-size: 1.1rem;
-				color: var(--text-main);
-				font-weight: 600;
-			}
-
-			.desktop-header .badge {
-				background-color: var(--bg-assistant);
-				padding: 0.2rem 0.5rem;
-				border-radius: 4px;
-				font-size: 0.75rem;
-				color: var(--text-muted);
-			}
-
-			.mobile-header {
-				display: none;
-				padding: 1rem;
-				border-bottom: 1px solid var(--border);
-				background-color: var(--bg-main);
-				align-items: center;
-				justify-content: center;
-				position: relative;
-			}
-
-			.mobile-header h2 {
-				font-size: 1.1rem;
-				color: var(--primary);
-			}
-
-			.toggle-sidebar {
-				position: absolute;
-				left: 1rem;
-				background: none;
-				border: none;
-				font-size: 1.5rem;
-				color: var(--text-muted);
-				cursor: pointer;
-			}
-
-			/* Chat Area */
-			.chat-area {
-				flex: 1;
-				overflow-y: auto;
-				padding-bottom: 2rem;
-				scroll-behavior: smooth;
-			}
-
-			.welcome-screen {
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-				justify-content: center;
-				height: 100%;
-				padding: 2rem;
-				text-align: center;
-				max-width: 600px;
-				margin: 0 auto;
-			}
-
-			.welcome-screen h2 {
-				font-size: 2rem;
-				color: var(--text-main);
-				margin-bottom: 0.5rem;
-			}
-
-			.welcome-screen > p {
-				color: var(--text-muted);
-				font-size: 1.1rem;
-				margin-bottom: 2rem;
-			}
-
-			.suggestions {
-				display: grid;
-				grid-template-columns: 1fr 1fr;
-				gap: 0.75rem;
-				width: 100%;
-			}
-
-			.suggestion-btn {
-				background-color: var(--bg-main);
-				border: 1px solid var(--border);
-				padding: 1rem;
-				border-radius: 8px;
-				text-align: left;
-				cursor: pointer;
-				transition: background-color 0.2s, box-shadow 0.2s;
-				font-size: 0.9rem;
-				color: var(--text-main);
-			}
-
-			.suggestion-btn:hover {
-				background-color: var(--bg-assistant);
-				box-shadow: var(--shadow);
-			}
-
-			.message {
-				padding: 1.5rem 1rem;
-				border-bottom: 1px solid rgba(0,0,0,0.05);
-			}
-
-			.message-inner {
-				max-width: 768px;
-				margin: 0 auto;
-				display: flex;
-				gap: 1.5rem;
-			}
-
-			.user-message {
-				background-color: var(--bg-user);
-			}
-
-			.assistant-message {
-				background-color: var(--bg-assistant);
-			}
-
-			.avatar {
-				width: 30px;
-				height: 30px;
-				border-radius: 4px;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				font-weight: bold;
-				flex-shrink: 0;
-			}
-
-			.user-avatar {
-				background-color: var(--primary);
-				color: white;
-			}
-
-			.assistant-avatar {
-				background-color: #10a37f;
-				color: white;
-			}
-
-			.message-content {
-				flex: 1;
-				min-width: 0;
-			}
-
-			.message-content p {
-				margin-bottom: 0.75rem;
-			}
-
-			.message-content p:last-child {
-				margin-bottom: 0;
-			}
-
-			.message-content ul, .message-content ol {
-				margin-left: 1.5rem;
-				margin-bottom: 0.75rem;
-			}
-
-			.message-content h1, .message-content h2, .message-content h3 {
-				margin-top: 1.5rem;
-				margin-bottom: 0.5rem;
-			}
-
-			.typing-indicator {
-				display: none;
-				text-align: center;
-				color: var(--text-muted);
-				padding: 1rem;
-				font-style: italic;
-				font-size: 0.9rem;
-			}
-
-			.typing-indicator.visible {
-				display: block;
-			}
-
-			/* Input Area */
-			.input-area {
-				padding: 1rem;
-				background-image: linear-gradient(180deg, rgba(255,255,255,0), #fff 20%);
-				position: relative;
-				bottom: 0;
-				width: 100%;
-			}
-
-			.input-wrapper {
-				max-width: 768px;
-				margin: 0 auto;
-				position: relative;
-				display: flex;
-				align-items: flex-end;
-				background-color: var(--bg-main);
-				border: 1px solid var(--border);
-				border-radius: 12px;
-				box-shadow: 0 0 15px rgba(0,0,0,0.05);
-				overflow: hidden;
-				padding: 0.5rem;
-			}
-
-			.input-wrapper:focus-within {
-				border-color: var(--border);
-				box-shadow: 0 0 15px rgba(0,0,0,0.1);
-			}
-
-			#user-input {
-				flex: 1;
-				border: none;
-				outline: none;
-				resize: none;
-				padding: 0.5rem;
-				font-family: inherit;
-				font-size: 1rem;
-				line-height: 1.5;
-				max-height: 200px;
-				background-color: transparent;
-			}
-
-			#send-button {
-				background-color: var(--primary);
-				color: white;
-				border: none;
-				border-radius: 8px;
-				width: 36px;
-				height: 36px;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				cursor: pointer;
-				margin-bottom: 2px;
-				margin-right: 2px;
-				transition: background-color 0.2s;
-			}
-
-			#send-button:hover {
-				background-color: var(--primary-hover);
-			}
-
-			#send-button:disabled {
-				background-color: #d1d5db;
-				cursor: not-allowed;
-			}
-
-			#send-button svg {
-				width: 16px;
-				height: 16px;
-				fill: currentColor;
-			}
-
-			.disclaimer {
-				text-align: center;
-				font-size: 0.75rem;
-				color: var(--text-muted);
-				margin-top: 0.75rem;
-			}
-
-			/* Responsive */
-			@media (max-width: 768px) {
-				.sidebar {
-					position: absolute;
-					left: -260px;
-				}
-				.sidebar.open {
-					left: 0;
-					box-shadow: 4px 0 10px rgba(0,0,0,0.1);
-				}
-				.desktop-header {
-					display: none;
-				}
-				.mobile-header {
-					display: flex;
-				}
-				.suggestions {
-					grid-template-columns: 1fr;
-				}
-			}
-		</style>
-	</head>
-	<body>
-		<div class="sidebar" id="sidebar">
-			<div class="sidebar-header">
-				<h2>SSI Stock Assistant</h2>
-				<p>Phiên bản AI Analyst</p>
-			</div>
-			<button class="new-chat-btn" onclick="location.reload()">
-				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"></path></svg>
-				Cuộc trò chuyện mới
-			</button>
-			<div class="chat-history">
-				<p class="history-label">Lịch sử chat mẫu</p>
-				<div class="history-item">Phân tích thị trường VN-Index</div>
-				<div class="history-item">Top cổ phiếu ngân hàng</div>
-				<div class="history-item">Rủi ro nhóm bất động sản</div>
-			</div>
-			<div class="sidebar-footer">
-				<p>SSI Stock Assistant &copy; 2025</p>
-			</div>
-		</div>
-
-		<main class="main-content">
-			<header class="desktop-header">
-				<div class="header-info">
-					<h2>SSI Stock Assistant</h2>
-					<span class="badge">Trợ lý AI phân tích cổ phiếu</span>
-				</div>
-			</header>
-
-			<header class="mobile-header">
-				<button class="toggle-sidebar" id="toggle-sidebar">☰</button>
-				<h2>SSI Stock Assistant</h2>
-			</header>
-
-			<div class="chat-area" id="chat-messages">
-				<div class="welcome-screen" id="welcome-screen">
-					<h2>SSI Stock Assistant</h2>
-					<p>Hôm nay bạn muốn phân tích mã cổ phiếu nào?</p>
-					<div class="suggestions" id="suggestions">
-						<button class="suggestion-btn">Phân tích chi tiết mã FPT</button>
-						<button class="suggestion-btn">Mô hình kinh doanh của VNM</button>
-						<button class="suggestion-btn">Cập nhật rủi ro cổ phiếu HPG</button>
-						<button class="suggestion-btn">So sánh SSI và VND</button>
-					</div>
-				</div>
-			</div>
-
-			<div class="typing-indicator" id="typing-indicator">Đang phân tích dữ liệu...</div>
-
-			<div class="input-area">
-				<div class="input-wrapper">
-					<textarea id="user-input" placeholder="Nhập mã cổ phiếu hoặc câu hỏi của bạn..." rows="1" autofocus></textarea>
-					<button id="send-button" title="Gửi">
-						<svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg>
-					</button>
-				</div>
-				<p class="disclaimer">SSI Stock Assistant cung cấp dữ liệu tham khảo, không phải là lời khuyên đầu tư chắc chắn.</p>
-			</div>
-		</main>
-
-		<script src="chat.js"></script>
-	</body>
-</html>
+<div class="w-full flex-shrink-0 bg-background pt-4 pb-6 px-gutter z-50 border-t border-white/5 relative">
+<!-- Gradient fade for floating effect -->
+<div class="absolute top-0 left-0 w-full h-8 -mt-8 bg-gradient-to-t from-background to-transparent pointer-events-none"></div>
+<div class="max-w-4xl mx-auto w-full flex flex-col items-center">
+<div id="typing-indicator" class="hidden text-center text-on-surface-variant/60 text-sm py-2 mb-2">
+    <div class="flex items-center justify-center gap-1">
+        <div class="w-1.5 h-1.5 rounded-full bg-tertiary animate-bounce"></div>
+        <div class="w-1.5 h-1.5 rounded-full bg-tertiary animate-bounce" style="animation-delay: 0.2s"></div>
+        <div class="w-1.5 h-1.5 rounded-full bg-tertiary animate-bounce" style="animation-delay: 0.4s"></div>
+    </div>
+</div>
+<div class="flex flex-wrap gap-2 justify-center mb-4">
+<button class="px-4 py-1.5 rounded-full bg-white/5 border border-white/5 text-[11px] font-medium text-on-surface-variant hover:bg-white/10 transition-colors suggestion-btn">So sánh SSI và VND</button>
+<button class="px-4 py-1.5 rounded-full bg-white/5 border border-white/5 text-[11px] font-medium text-on-surface-variant hover:bg-white/10 transition-colors suggestion-btn">Báo cáo Q4 HPG</button>
+<button class="px-4 py-1.5 rounded-full bg-white/5 border border-white/5 text-[11px] font-medium text-on-surface-variant hover:bg-white/10 transition-colors suggestion-btn">Lịch sử cổ tức FPT</button>
+</div>
+<div class="relative group ai-input-glow w-full">
+<div class="glass-card rounded-2xl flex items-center p-3 gap-2 bg-white/[0.08] border-none shadow-2xl">
+<button class="p-2 text-on-surface-variant hover:text-tertiary transition-colors">
+<span class="material-symbols-outlined text-xl" data-icon="add_circle">add_circle</span>
+</button>
+<textarea id="user-input" class="flex-1 bg-transparent border-none focus:ring-0 text-on-surface py-2.5 resize-none scrollbar-hide max-h-48 text-base placeholder-on-surface-variant/40" placeholder="Nhập mã cổ phiếu hoặc câu hỏi của bạn..." rows="1"></textarea>
+<div class="flex gap-1">
+<button class="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-all rounded-xl flex-shrink-0">
+<span class="material-symbols-outlined text-xl" data-icon="mic">mic</span>
+</button>
+<button id="send-button" class="w-10 h-10 bg-tertiary text-on-tertiary rounded-xl flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-lg shadow-tertiary/20 flex-shrink-0 disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed">
+<span class="material-symbols-outlined" data-icon="arrow_upward" style="font-variation-settings: 'wght' 700;">arrow_upward</span>
+</button>
+</div>
+</div>
+</div>
+<div class="text-center mt-4">
+<p class="text-[10px] font-label-mono text-on-surface-variant/40 uppercase tracking-widest">
+                    SSI Stock Assistant cung cấp dữ liệu tham khảo, không phải là lời khuyên đầu tư.
+                </p>
+</div>
+</div>
+</div>
+</main>
+<!-- Background Elements -->
+<div class="fixed top-0 left-0 w-full h-full -z-20 pointer-events-none">
+<svg class="w-full h-full opacity-10" preserveaspectratio="none" viewbox="0 0 100 100">
+<defs>
+<pattern height="10" id="grid" patternunits="userSpaceOnUse" width="10">
+<path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" stroke-width="0.05"></path>
+</pattern>
+</defs>
+<rect fill="url(#grid)" height="100" width="100"></rect>
+</svg>
+</div>
+<script src="chat.js"></script>
+</body></html>

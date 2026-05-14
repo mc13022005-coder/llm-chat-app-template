@@ -43,7 +43,8 @@ sendButton.addEventListener("click", sendMessage);
 const suggestionBtns = document.querySelectorAll(".suggestion-btn");
 suggestionBtns.forEach(btn => {
 	btn.addEventListener("click", () => {
-		userInput.value = btn.textContent;
+		const textDiv = btn.querySelector('.font-semibold');
+		userInput.value = textDiv ? textDiv.textContent : btn.textContent;
 		sendMessage();
 	});
 });
@@ -74,26 +75,37 @@ function parseText(text) {
 }
 
 function addMessageToUI(role, content) {
-	// Remove welcome screen if it exists
-	if (welcomeScreen && welcomeScreen.parentNode) {
-		welcomeScreen.parentNode.removeChild(welcomeScreen);
+	// Hide welcome screen if it exists
+	if (welcomeScreen && welcomeScreen.style.display !== 'none') {
+		welcomeScreen.style.display = 'none';
 	}
 
 	const messageEl = document.createElement("div");
-	messageEl.className = `message ${role}-message`;
+	messageEl.className = role === "user" 
+		? "w-full max-w-4xl px-gutter py-6 flex gap-4 w-full justify-end" 
+		: "w-full max-w-4xl px-gutter py-6 flex gap-4 w-full";
 	
-	const avatarChar = role === "user" ? "U" : "AI";
-	const avatarClass = role === "user" ? "user-avatar" : "assistant-avatar";
-	const parsedContent = role === "assistant" ? parseText(content) : `<p>${content.replace(/\n/g, '<br/>')}</p>`;
+	const parsedContent = role === "assistant" ? parseText(content) : `<p>${content.replace(/\\n/g, '<br/>')}</p>`;
 
-	messageEl.innerHTML = `
-		<div class="message-inner">
-			<div class="avatar ${avatarClass}">${avatarChar}</div>
-			<div class="message-content">
+	if (role === "user") {
+		messageEl.innerHTML = `
+			<div class="flex-1 text-on-surface bg-white/5 rounded-2xl p-4 ml-auto max-w-[80%] message-content break-words">
 				${parsedContent}
 			</div>
-		</div>
-	`;
+			<div class="w-8 h-8 rounded-full overflow-hidden ring-1 ring-white/10 flex-shrink-0">
+				<img alt="User" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDo8L8rsWVVjHW7uVwvfur7CYdUtDttGsac7ZfYUadFh-h-Pd0_cHtnFSy87MwGme_wvX2SypmNCcp3ukIeBUtOQIVO9j6-Nz1Z83Mr2pwHcGu6F-D88UlGw6etGh2OVNwFCixKNWwhtEfBZpwsYOukVcXsdm9CvS8kKSJdRaofSKDZ9959x_mBvPQteMu17Q1XakGND6_tRf46rjF_DSRQJWIIEqoH5qnlJfQFF0U0e22oOM3VWI-P80qbXjEqjqSjrmm_ihqxVSk" />
+			</div>
+		`;
+	} else {
+		messageEl.innerHTML = `
+			<div class="w-8 h-8 rounded-xl overflow-hidden flex items-center justify-center bg-gradient-to-br from-tertiary to-tertiary-container shadow-lg flex-shrink-0 mt-1">
+				<img alt="AIVANCE" class="w-5 h-5 brightness-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBP9_0Sj9MqvoSRMOrfYuUsa6gpN4usEUeFK54k2jSyHjriwo2d8FPMBaOSrDB4ZeAIayeLp51cLRsLw_Sm5FTfBgQ6U-yK1mDu0jPRqZ2RAra-m1PFEB0XpAb9sN4dlt1ZRMbU2YYYhiI8BRJEvS8AUGYt25ovbqgT5T2lf0wICu7lq5LZEUQQPCNjOaW_f9M3U_HkEIdYaqfx3C_LXNtn82g-dlc2XRLndFpf7D2X81B8XKB6ZdA-AjBlVSA3t_8K_nIZLlRV1Lk" />
+			</div>
+			<div class="flex-1 text-on-surface message-content overflow-hidden text-base">
+				${parsedContent}
+			</div>
+		`;
+	}
 	
 	chatMessages.appendChild(messageEl);
 	chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -118,7 +130,9 @@ async function sendMessage() {
 	userInput.style.height = "auto";
 
 	// Show typing indicator
-	typingIndicator.classList.add("visible");
+	if (typingIndicator) {
+		typingIndicator.classList.remove("hidden");
+	}
 	chatMessages.scrollTop = chatMessages.scrollHeight;
 
 	// Add to logic history
@@ -217,7 +231,9 @@ async function sendMessage() {
 		console.error("Error:", error);
 		addMessageToUI("assistant", "Xin lỗi, đã có lỗi xảy ra khi xử lý yêu cầu của bạn.");
 	} finally {
-		typingIndicator.classList.remove("visible");
+		if (typingIndicator) {
+			typingIndicator.classList.add("hidden");
+		}
 		isProcessing = false;
 		userInput.disabled = false;
 		sendButton.disabled = false;
@@ -244,4 +260,22 @@ function consumeSseEvents(buffer) {
 		events.push(dataLines.join("\n"));
 	}
 	return { events, buffer: normalized };
+}
+
+// Mock Auth Toggle
+const authLoggedOut = document.getElementById("auth-logged-out");
+const authLoggedIn = document.getElementById("auth-logged-in");
+const btnLogin = document.getElementById("btn-login");
+const btnLogout = document.getElementById("btn-logout");
+
+if (btnLogin && btnLogout && authLoggedOut && authLoggedIn) {
+	btnLogin.addEventListener("click", () => {
+		authLoggedOut.classList.add("hidden");
+		authLoggedIn.classList.remove("hidden");
+	});
+
+	btnLogout.addEventListener("click", () => {
+		authLoggedIn.classList.add("hidden");
+		authLoggedOut.classList.remove("hidden");
+	});
 }
