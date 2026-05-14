@@ -17,6 +17,7 @@ export interface Env {
 	 * Optional API Base URL for stock data
 	 */
 	STOCK_API_BASE_URL?: string;
+	VITE_API_BASE_URL?: string;
 }
 
 /**

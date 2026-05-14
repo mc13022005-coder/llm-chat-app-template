@@ -18,5 +18,9 @@
 	"ai": {
 		"binding": "AI"
 	},
+	"vars": {
+		"STOCK_API_BASE_URL": "https://stockgpt-backend.onrender.com",
+		"VITE_API_BASE_URL": "https://stockgpt-backend.onrender.com"
+	},
 	"upload_source_maps": true
 }

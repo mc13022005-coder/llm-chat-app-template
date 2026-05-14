@@ -118,7 +118,10 @@ async function handleChatRequest(
 			if (symbolMatch) {
 				const symbol = symbolMatch[0].toUpperCase();
 				console.log(`[DEBUG] Nhận diện mã cổ phiếu: ${symbol}`);
-				const baseUrl = env.STOCK_API_BASE_URL || STOCK_API_BASE_URL;
+				const baseUrl =
+					env.STOCK_API_BASE_URL ||
+					env.VITE_API_BASE_URL ||
+					"https://stockgpt-backend.onrender.com";
 				const endpoint = `${baseUrl}/stock/${symbol}/company`;
 				console.log(`[DEBUG] Gọi backend URL: ${endpoint}`);
 
