@@ -15,7 +15,7 @@ let chatHistory = [
 	{
 		role: "assistant",
 		content:
-			"Hello! I'm an LLM chat app powered by Cloudflare Workers AI. How can I help you today?",
+			"Xin chào! Tôi là StockGPT Việt Nam, trợ lý AI phân tích cổ phiếu. Tôi có thể giúp gì cho bạn hôm nay?",
 	},
 ];
 let isProcessing = false;
@@ -36,6 +36,15 @@ userInput.addEventListener("keydown", function (e) {
 
 // Send button click handler
 sendButton.addEventListener("click", sendMessage);
+
+// Suggestion buttons click handler
+const suggestionBtns = document.querySelectorAll(".suggestion-btn");
+suggestionBtns.forEach(btn => {
+	btn.addEventListener("click", () => {
+		userInput.value = btn.textContent;
+		sendMessage();
+	});
+});
 
 /**
  * Sends a message to the chat API and processes the response
@@ -181,7 +190,7 @@ async function sendMessage() {
 		console.error("Error:", error);
 		addMessageToChat(
 			"assistant",
-			"Sorry, there was an error processing your request.",
+			"Xin lỗi, đã có lỗi xảy ra khi xử lý yêu cầu của bạn.",
 		);
 	} finally {
 		// Hide typing indicator

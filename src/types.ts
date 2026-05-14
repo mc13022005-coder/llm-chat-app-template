@@ -12,6 +12,11 @@ export interface Env {
 	 * Binding for static assets.
 	 */
 	ASSETS: { fetch: (request: Request) => Promise<Response> };
+
+	/**
+	 * Optional API Base URL for stock data
+	 */
+	STOCK_API_BASE_URL?: string;
 }
 
 /**

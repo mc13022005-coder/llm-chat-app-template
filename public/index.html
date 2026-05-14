@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>LLM Chat App</title>
+		<title>StockGPT Việt Nam</title>
 		<style>
 			:root {
 				--primary-color: #f6821f;
@@ -134,6 +134,30 @@
 				display: block;
 			}
 
+			.suggestions {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.5rem;
+				padding: 0.75rem;
+				background-color: white;
+				border-top: 1px solid var(--border-color);
+			}
+
+			.suggestion-btn {
+				background-color: var(--assistant-msg-bg);
+				border: 1px solid var(--border-color);
+				padding: 0.4rem 0.8rem;
+				border-radius: 16px;
+				font-size: 0.85rem;
+				cursor: pointer;
+				color: var(--text-color);
+				transition: background-color 0.2s;
+			}
+
+			.suggestion-btn:hover {
+				background-color: var(--border-color);
+			}
+
 			footer {
 				margin-top: 1rem;
 				text-align: center;
@@ -144,37 +168,43 @@
 	</head>
 	<body>
 		<header>
-			<h1>Cloudflare AI Chat</h1>
-			<p>Powered by Cloudflare Workers AI</p>
+			<h1>StockGPT Việt Nam</h1>
+			<p>Trợ lý AI phân tích cổ phiếu</p>
 		</header>
 
 		<div class="chat-container">
 			<div id="chat-messages" class="chat-messages">
 				<div class="message assistant-message">
 					<p>
-						Hello! I'm an LLM chat app powered by Cloudflare Workers AI. How can
-						I help you today?
+						Xin chào! Tôi là StockGPT Việt Nam, trợ lý AI phân tích cổ phiếu. Tôi có thể giúp gì cho bạn hôm nay?
 					</p>
 				</div>
 			</div>
 
 			<div class="typing-indicator" id="typing-indicator">
-				AI is thinking...
+				AI đang suy nghĩ...
+			</div>
+
+			<div class="suggestions" id="suggestions">
+				<button class="suggestion-btn">Phân tích mã FPT</button>
+				<button class="suggestion-btn">VNM kinh doanh gì?</button>
+				<button class="suggestion-btn">Rủi ro của cổ phiếu HPG là gì?</button>
+				<button class="suggestion-btn">So sánh SSI và VND</button>
 			</div>
 
 			<div class="message-input">
 				<textarea
 					id="user-input"
-					placeholder="Type your message here..."
+					placeholder="Nhập mã cổ phiếu hoặc câu hỏi của bạn..."
 					rows="1"
 					autofocus
 				></textarea>
-				<button id="send-button">Send</button>
+				<button id="send-button">Gửi</button>
 			</div>
 		</div>
 
 		<footer>
-			<p>Cloudflare Workers AI Chat Template &copy; 2025</p>
+			<p>StockGPT Việt Nam &copy; 2025</p>
 		</footer>
 
 		<!-- Chat app script -->
