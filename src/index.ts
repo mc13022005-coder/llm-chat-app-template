@@ -17,7 +17,41 @@ const STOCK_API_BASE_URL = "http://127.0.0.1:8000";
 
 // Default system prompt
 const SYSTEM_PROMPT =
-	"Bạn là trợ lý phân tích cổ phiếu Việt Nam. Bạn chỉ được phân tích dựa trên dữ liệu được hệ thống cung cấp từ vnstock/backend. Không được tự bịa số liệu. Không được khuyến nghị mua/bán chắc chắn. Nếu thiếu dữ liệu, phải nói rõ phần nào thiếu.";
+	`Bạn là trợ lý AI chuyên về chứng khoán Việt Nam. 
+Quy tắc:
+1. Trả lời đúng trọng tâm câu hỏi của người dùng. Câu hỏi đơn giản thì trả lời ngắn gọn, không nhồi nhét toàn bộ dữ liệu.
+2. Bạn chỉ được phân tích dựa trên dữ liệu được hệ thống cung cấp từ vnstock/backend.
+3. KHÔNG được tự bịa số liệu. Nếu thiếu dữ liệu, phải nói rõ là dữ liệu chưa có.
+4. KHÔNG được đưa ra khuyến nghị mua/bán chắc chắn.
+5. Luôn nhắc dữ liệu chỉ mang tính tham khảo nếu câu trả lời có tính chất phân tích/định giá.`;
+
+function classifyIntent(query: string): string {
+	const q = query.toLowerCase();
+
+	const identityKeywords = [
+		"là công ty nào", "của công ty nào", "thuộc công ty nào",
+		"doanh nghiệp nào", "là doanh nghiệp nào", "của doanh nghiệp nào",
+		"là gì", "hoạt động trong lĩnh vực"
+	];
+	if (identityKeywords.some((kw) => q.includes(kw))) return "company_identity";
+
+	const analysisKeywords = ["phân tích", "tổng quan", "có tốt không", "đánh giá", "nhận định", "cập nhật"];
+	if (analysisKeywords.some((kw) => q.includes(kw))) return "stock_analysis";
+
+	const financialKeywords = ["tài chính", "chỉ số", "doanh thu", "lợi nhuận", "pe", "pb", "roa", "roe", "biên lợi nhuận", "báo cáo"];
+	if (financialKeywords.some((kw) => q.includes(kw))) return "financial_metrics";
+
+	const riskKeywords = ["rủi ro", "nguy hiểm", "xấu", "cảnh báo"];
+	if (riskKeywords.some((kw) => q.includes(kw))) return "risk";
+
+	const dividendKeywords = ["cổ tức", "chia thưởng", "phát hành"];
+	if (dividendKeywords.some((kw) => q.includes(kw))) return "dividend";
+
+	const valuationKeywords = ["định giá", "giá mục tiêu", "fair value", "giá trị thực"];
+	if (valuationKeywords.some((kw) => q.includes(kw))) return "valuation";
+
+	return "unknown";
+}
 
 export default {
 	/**
@@ -119,8 +153,29 @@ async function handleChatRequest(
 						throw new Error("Không nhận diện được dữ liệu (empty/null)");
 					}
 
+					// Classify intent
+					const intent = classifyIntent(lastUserMessage.content);
+					console.log(`[DEBUG] Intent: ${intent}`);
+
+					let intentPrompt = "";
+					if (intent === "company_identity") {
+						intentPrompt = `\n\n[YÊU CẦU ĐẶC BIỆT LÀM THEO INTENT]:
+1. Người dùng chỉ hỏi nhận diện công ty. Hãy trả lời NGẮN GỌN (120-180 từ).
+2. Format bắt buộc:
+"Mã cổ phiếu ${symbol} thuộc [Tên đầy đủ của công ty]."
+Một số thông tin chính:
+- Tên đầy đủ: ...
+- Lĩnh vực hoạt động: ...
+- Sàn giao dịch: ...
+- Mô tả ngắn: ...
+3. TUYỆT ĐỐI KHÔNG đưa các thông tin tài chính (giá, ROA, ROE, doanh thu, lợi nhuận, khuyến nghị) vào câu trả lời này.
+4. Cuối câu trả lời, HÃY HỎI: "Bạn có muốn xem thêm tình hình tài chính, rủi ro hay cổ tức của ${symbol} không?"`;
+					} else {
+						intentPrompt = `\n\n[Yêu cầu]: Hãy trả lời dựa trên dữ liệu trên. Trả lời đúng trọng tâm câu hỏi (nếu hỏi tài chính thì xoáy sâu vào tài chính, hỏi rủi ro thì nói rủi ro). KHÔNG được tự bịa số liệu. KHÔNG nhồi nhét toàn bộ dữ liệu nếu người dùng không hỏi.`;
+					}
+
 					// Append the data to the user's prompt so the AI can use it
-					lastUserMessage.content += `\n\n[Dữ liệu hệ thống cung cấp từ vnstock cho mã ${symbol}]:\n${stockData}\n\n[Yêu cầu: Hãy phân tích dựa trên dữ liệu trên. Không được tự bịa số liệu. Không được đưa ra lời khuyên mua/bán chắc chắn.]`;
+					lastUserMessage.content += `\n\n[Dữ liệu hệ thống cung cấp từ vnstock cho mã ${symbol}]:\n${stockData}${intentPrompt}`;
 				} catch (err: any) {
 					console.error(`[ERROR] Lỗi gọi backend API cho mã ${symbol}:`, err);
 					
