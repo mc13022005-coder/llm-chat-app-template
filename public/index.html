@@ -155,8 +155,8 @@
 <div class="flex flex-col h-full py-8 px-4">
 <!-- Brand -->
 <div class="flex items-center gap-3 mb-10 px-2">
-<div class="w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center bg-gradient-to-br from-tertiary to-tertiary-container shadow-lg shadow-tertiary/10">
-<img alt="AIVANCE Logo" class="w-7 h-7 brightness-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBP9_0Sj9MqvoSRMOrfYuUsa6gpN4usEUeFK54k2jSyHjriwo2d8FPMBaOSrDB4ZeAIayeLp51cLRsLw_Sm5FTfBgQ6U-yK1mDu0jPRqZ2RAra-m1PFEB0XpAb9sN4dlt1ZRMbU2YYYhiI8BRJEvS8AUGYt25ovbqgT5T2lf0wICu7lq5LZEUQQPCNjOaW_f9M3U_HkEIdYaqfx3C_LXNtn82g-dlc2XRLndFpf7D2X81B8XKB6ZdA-AjBlVSA3t_8K_nIZLlRV1Lk"/>
+<div class="w-14 h-14 rounded-xl overflow-hidden flex-shrink-0 flex items-center justify-center shadow-lg bg-white/5 border border-white/10">
+<img alt="SSI Logo" class="w-full h-full object-contain p-1" src="/logo.png"/>
 </div>
 <div class="hidden lg:block">
 <h1 class="font-headline-md text-lg font-bold text-on-surface tracking-tight leading-none">SSI Stock Assistant</h1>
@@ -170,20 +170,8 @@
 <nav class="flex-1 space-y-1.5 scrollbar-hide overflow-y-auto">
 <a class="flex items-center gap-3 px-3 py-2.5 text-tertiary bg-white/5 font-semibold rounded-xl transition-all cursor-pointer" onclick="location.reload()">
 <span class="material-symbols-outlined" data-icon="chat">chat</span>
-<span class="hidden lg:block font-body-sm text-body-sm">New Session</span>
+<span class="hidden lg:block font-body-sm text-body-sm">New Chat</span>
 </a>
-<div class="pt-8 mb-2 hidden lg:block">
-<span class="text-[10px] text-on-surface-variant uppercase tracking-[0.2em] px-3 opacity-40 font-bold">Ví dụ mã cổ phiếu</span>
-</div>
-<div class="hidden lg:block px-2">
-<div class="glass-card rounded-2xl p-4 border-none bg-white/5">
-<div class="flex justify-between items-center">
-<span class="font-bold text-sm">VIB</span>
-<span class="text-xs text-green-400 font-bold">+1.2%</span>
-</div>
-<div class="text-[10px] text-on-surface-variant mt-1">Market: 28,000 VND</div>
-</div>
-</div>
 </nav>
 <!-- Auth Section -->
 <div class="mt-auto pt-6 border-t border-white/5">
@@ -239,57 +227,19 @@
 <!-- Scrollable Chat Area -->
 <div id="chat-messages" class="flex-1 overflow-y-auto scrollbar-hide flex flex-col items-center w-full pt-16 pb-8">
 <!-- Welcome View (Initial State) -->
-<div id="welcome-screen" class="w-full max-w-4xl px-gutter py-24 flex flex-col items-center text-center mt-8">
-<div class="mb-10 group cursor-default">
-<div class="w-20 h-20 mx-auto rounded-[2rem] bg-gradient-to-tr from-tertiary to-tertiary-container flex items-center justify-center shadow-2xl shadow-tertiary/20 group-hover:scale-105 transition-transform duration-500">
-<span class="material-symbols-outlined text-4xl text-on-tertiary" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<div id="welcome-screen" class="w-full max-w-4xl px-gutter py-4 lg:py-12 flex flex-col items-center justify-center text-center my-auto">
+<div class="mb-4 lg:mb-6 group cursor-default">
+<div class="w-16 h-16 mx-auto rounded-[1.5rem] bg-gradient-to-tr from-tertiary to-tertiary-container flex items-center justify-center shadow-2xl shadow-tertiary/20 group-hover:scale-105 transition-transform duration-500">
+<span class="material-symbols-outlined text-3xl text-on-tertiary" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
 </div>
 </div>
-<h2 class="font-display-lg text-4xl md:text-5xl lg:text-6xl text-on-surface mb-6 tracking-tight font-extrabold bg-clip-text text-transparent bg-gradient-to-b from-on-surface to-on-surface-variant">
+<h2 class="font-display-lg text-3xl md:text-4xl lg:text-5xl text-on-surface mb-3 tracking-tight font-extrabold bg-clip-text text-transparent bg-gradient-to-b from-on-surface to-on-surface-variant">
                     Tôi có thể giúp gì <br class="hidden md:block"/> cho bạn hôm nay?
                 </h2>
-<p class="font-body-base text-lg text-on-surface-variant/80 max-w-2xl mx-auto mb-16 leading-relaxed">
+<p class="font-body-base text-sm md:text-base text-on-surface-variant/80 max-w-2xl mx-auto mb-0 leading-relaxed">
                     Trợ lý AI phân tích định lượng và cơ bản cho thị trường chứng khoán Việt Nam.
                 </p>
-<!-- Action Suggestions -->
-<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-2xl">
-<button class="glass-card group p-5 rounded-2xl text-left hover:bg-white/10 transition-all border-none flex items-center gap-4 suggestion-btn">
-<div class="w-10 h-10 rounded-xl bg-tertiary/10 flex items-center justify-center text-tertiary group-hover:bg-tertiary group-hover:text-on-tertiary transition-colors flex-shrink-0">
-<span class="material-symbols-outlined text-sm" data-icon="query_stats">query_stats</span>
-</div>
-<div>
-<div class="font-semibold text-on-surface text-sm">Phân tích mã VIB</div>
-<div class="text-xs text-on-surface-variant mt-0.5">Chi tiết kỹ thuật & cơ bản</div>
-</div>
-</button>
-<button class="glass-card group p-5 rounded-2xl text-left hover:bg-white/10 transition-all border-none flex items-center gap-4 suggestion-btn">
-<div class="w-10 h-10 rounded-xl bg-tertiary/10 flex items-center justify-center text-tertiary group-hover:bg-tertiary group-hover:text-on-tertiary transition-colors flex-shrink-0">
-<span class="material-symbols-outlined text-sm" data-icon="warning">warning</span>
-</div>
-<div>
-<div class="font-semibold text-on-surface text-sm">Rủi ro cổ phiếu HPG</div>
-<div class="text-xs text-on-surface-variant mt-0.5">Cảnh báo và phân tích</div>
-</div>
-</button>
-<button class="glass-card group p-5 rounded-2xl text-left hover:bg-white/10 transition-all border-none flex items-center gap-4 suggestion-btn">
-<div class="w-10 h-10 rounded-xl bg-tertiary/10 flex items-center justify-center text-tertiary group-hover:bg-tertiary group-hover:text-on-tertiary transition-colors flex-shrink-0">
-<span class="material-symbols-outlined text-sm" data-icon="info">info</span>
-</div>
-<div>
-<div class="font-semibold text-on-surface text-sm">Mã FPT của công ty nào?</div>
-<div class="text-xs text-on-surface-variant mt-0.5">Thông tin doanh nghiệp</div>
-</div>
-</button>
-<button class="glass-card group p-5 rounded-2xl text-left hover:bg-white/10 transition-all border-none flex items-center gap-4 suggestion-btn">
-<div class="w-10 h-10 rounded-xl bg-tertiary/10 flex items-center justify-center text-tertiary group-hover:bg-tertiary group-hover:text-on-tertiary transition-colors flex-shrink-0">
-<span class="material-symbols-outlined text-sm" data-icon="compare_arrows">compare_arrows</span>
-</div>
-<div>
-<div class="font-semibold text-on-surface text-sm">So sánh VCB và TCB</div>
-<div class="text-xs text-on-surface-variant mt-0.5">Phân tích tương quan</div>
-</div>
-</button>
-</div>
+<!-- Action Suggestions removed per user request -->
 </div>
 </div>
 
@@ -304,11 +254,7 @@
         <div class="w-1.5 h-1.5 rounded-full bg-tertiary animate-bounce" style="animation-delay: 0.4s"></div>
     </div>
 </div>
-<div class="flex flex-wrap gap-2 justify-center mb-4">
-<button class="px-4 py-1.5 rounded-full bg-white/5 border border-white/5 text-[11px] font-medium text-on-surface-variant hover:bg-white/10 transition-colors suggestion-btn">So sánh SSI và VND</button>
-<button class="px-4 py-1.5 rounded-full bg-white/5 border border-white/5 text-[11px] font-medium text-on-surface-variant hover:bg-white/10 transition-colors suggestion-btn">Báo cáo Q4 HPG</button>
-<button class="px-4 py-1.5 rounded-full bg-white/5 border border-white/5 text-[11px] font-medium text-on-surface-variant hover:bg-white/10 transition-colors suggestion-btn">Lịch sử cổ tức FPT</button>
-</div>
+<!-- Suggestion chips removed -->
 <div class="relative group ai-input-glow w-full">
 <div class="glass-card rounded-2xl flex items-center p-3 gap-2 bg-white/[0.08] border-none shadow-2xl">
 <button class="p-2 text-on-surface-variant hover:text-tertiary transition-colors">
