@@ -92,14 +92,11 @@ function addMessageToUI(role, content) {
 			<div class="flex-1 text-on-surface bg-white/5 rounded-2xl p-4 ml-auto max-w-[80%] message-content break-words">
 				${parsedContent}
 			</div>
-			<div class="w-8 h-8 rounded-full overflow-hidden ring-1 ring-white/10 flex-shrink-0">
-				<img alt="User" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDo8L8rsWVVjHW7uVwvfur7CYdUtDttGsac7ZfYUadFh-h-Pd0_cHtnFSy87MwGme_wvX2SypmNCcp3ukIeBUtOQIVO9j6-Nz1Z83Mr2pwHcGu6F-D88UlGw6etGh2OVNwFCixKNWwhtEfBZpwsYOukVcXsdm9CvS8kKSJdRaofSKDZ9959x_mBvPQteMu17Q1XakGND6_tRf46rjF_DSRQJWIIEqoH5qnlJfQFF0U0e22oOM3VWI-P80qbXjEqjqSjrmm_ihqxVSk" />
-			</div>
 		`;
 	} else {
 		messageEl.innerHTML = `
-			<div class="w-8 h-8 rounded-xl overflow-hidden flex items-center justify-center bg-gradient-to-br from-tertiary to-tertiary-container shadow-lg flex-shrink-0 mt-1">
-				<img alt="AIVANCE" class="w-5 h-5 brightness-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBP9_0Sj9MqvoSRMOrfYuUsa6gpN4usEUeFK54k2jSyHjriwo2d8FPMBaOSrDB4ZeAIayeLp51cLRsLw_Sm5FTfBgQ6U-yK1mDu0jPRqZ2RAra-m1PFEB0XpAb9sN4dlt1ZRMbU2YYYhiI8BRJEvS8AUGYt25ovbqgT5T2lf0wICu7lq5LZEUQQPCNjOaW_f9M3U_HkEIdYaqfx3C_LXNtn82g-dlc2XRLndFpf7D2X81B8XKB6ZdA-AjBlVSA3t_8K_nIZLlRV1Lk" />
+			<div class="w-9 h-9 rounded-xl overflow-hidden flex items-center justify-center bg-[#e5c04f] shadow-md flex-shrink-0 mt-0.5">
+				<span class="material-symbols-outlined text-[22px] text-black/90" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
 			</div>
 			<div class="flex-1 text-on-surface message-content overflow-hidden text-base">
 				${parsedContent}
