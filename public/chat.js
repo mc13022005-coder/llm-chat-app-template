@@ -98,7 +98,7 @@ function addMessageToUI(role, content) {
 			<div class="w-9 h-9 rounded-xl overflow-hidden flex items-center justify-center bg-[#e5c04f] shadow-md flex-shrink-0 mt-0.5">
 				<span class="material-symbols-outlined text-[22px] text-black/90" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
 			</div>
-			<div class="flex-1 text-on-surface message-content overflow-hidden text-base">
+			<div class="flex-1 text-on-surface message-content markdown-body overflow-hidden text-base bg-white/[0.03] border border-white/5 rounded-2xl p-6 shadow-sm">
 				${parsedContent}
 			</div>
 		`;
