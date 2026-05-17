@@ -194,6 +194,12 @@
 <span class="hidden lg:block font-body-sm text-body-sm">New Chat</span>
 </a>
 </nav>
+<div class="px-2 mt-4 mb-2">
+<button id="btn-consultation" class="w-full flex items-center justify-center gap-3 px-3 py-3 bg-gradient-to-r from-tertiary to-[#d4af37] text-on-tertiary hover:scale-[1.02] active:scale-95 transition-all rounded-xl font-bold shadow-lg shadow-tertiary/20">
+<span class="material-symbols-outlined text-xl">support_agent</span>
+<span class="hidden lg:block text-sm">Đăng ký tư vấn miễn phí</span>
+</button>
+</div>
 <!-- Auth Section -->
 <div class="mt-auto pt-6 border-t border-white/5">
 <!-- Logged Out State -->
@@ -307,6 +313,53 @@
 </defs>
 <rect fill="url(#grid)" height="100" width="100"></rect>
 </svg>
+</div>
+<!-- Consultation Modal -->
+<div id="consultation-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center px-4">
+    <div id="consultation-overlay" class="absolute inset-0 bg-black/60 backdrop-blur-sm cursor-pointer"></div>
+    <div class="relative bg-surface-container-high border border-white/10 rounded-2xl p-6 md:p-8 w-full max-w-md shadow-2xl z-10 transform scale-95 opacity-0 transition-all duration-300" id="consultation-content">
+        <button id="close-modal-btn" class="absolute top-4 right-4 text-on-surface-variant hover:text-white transition-colors">
+            <span class="material-symbols-outlined">close</span>
+        </button>
+        <h3 class="text-2xl font-display-lg font-bold text-on-surface mb-2">Đăng ký tư vấn miễn phí</h3>
+        <p class="text-sm text-on-surface-variant mb-6 leading-relaxed">
+            Chuyên viên sẽ liên hệ để hỗ trợ bạn về nhu cầu đầu tư/chứng khoán.
+        </p>
+        <form id="consultation-form" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-on-surface mb-1">Họ và tên <span class="text-error">*</span></label>
+                <input type="text" id="consult-name" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-on-surface focus:border-tertiary focus:ring-1 focus:ring-tertiary outline-none transition-all placeholder-on-surface-variant/40" placeholder="Nguyễn Văn A" required>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-on-surface mb-1">Số điện thoại <span class="text-error">*</span></label>
+                <input type="tel" id="consult-phone" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-on-surface focus:border-tertiary focus:ring-1 focus:ring-tertiary outline-none transition-all placeholder-on-surface-variant/40" placeholder="09xx xxx xxx" required>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-on-surface mb-1">Email <span class="text-error">*</span></label>
+                <input type="email" id="consult-email" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-on-surface focus:border-tertiary focus:ring-1 focus:ring-tertiary outline-none transition-all placeholder-on-surface-variant/40" placeholder="email@example.com" required>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-on-surface mb-1">Chủ đề quan tâm</label>
+                <select id="consult-topic" class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-on-surface focus:border-tertiary focus:ring-1 focus:ring-tertiary outline-none transition-all [&>option]:bg-surface-container [&>option]:text-on-surface">
+                    <option value="Tìm hiểu cổ phiếu">Tìm hiểu cổ phiếu</option>
+                    <option value="Phân tích danh mục">Phân tích danh mục</option>
+                    <option value="Tư vấn rủi ro">Tư vấn rủi ro</option>
+                    <option value="Cổ tức và báo cáo tài chính">Cổ tức và báo cáo tài chính</option>
+                    <option value="Khác">Khác</option>
+                </select>
+            </div>
+            <div id="consultation-success" class="hidden bg-[#10b981]/20 text-[#10b981] text-sm p-3 rounded-lg border border-[#10b981]/30 text-center font-medium">
+                Cảm ơn bạn! Yêu cầu tư vấn đã được ghi nhận.
+            </div>
+            <button type="submit" id="consultation-submit" class="w-full py-3 mt-2 bg-gradient-to-r from-tertiary to-[#d4af37] text-on-tertiary rounded-xl font-bold shadow-lg hover:opacity-90 active:scale-95 transition-all">
+                Gửi yêu cầu tư vấn
+            </button>
+        </form>
+        <div class="mt-6 text-center">
+            <p class="text-sm font-medium text-tertiary mb-2">Hoặc liên hệ trực tiếp: Zalo 0348 520 023</p>
+            <p class="text-[10px] text-on-surface-variant/60 uppercase tracking-wider">Thông tin của bạn được bảo mật và chỉ dùng cho mục đích tư vấn.</p>
+        </div>
+    </div>
 </div>
 <script src="chat.js"></script>
 </body></html>

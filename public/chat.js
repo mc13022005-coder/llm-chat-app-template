@@ -276,3 +276,71 @@ if (btnLogin && btnLogout && authLoggedOut && authLoggedIn) {
 		authLoggedOut.classList.remove("hidden");
 	});
 }
+
+// Consultation Modal Logic
+const btnConsultation = document.getElementById("btn-consultation");
+const consultationModal = document.getElementById("consultation-modal");
+const consultationOverlay = document.getElementById("consultation-overlay");
+const closeModalBtn = document.getElementById("close-modal-btn");
+const consultationContent = document.getElementById("consultation-content");
+const consultationForm = document.getElementById("consultation-form");
+const consultationSuccess = document.getElementById("consultation-success");
+
+function openConsultationModal() {
+	if (!consultationModal) return;
+	consultationModal.classList.remove("hidden");
+	// Small delay to allow display block to apply before animating opacity/transform
+	setTimeout(() => {
+		consultationContent.classList.remove("scale-95", "opacity-0");
+		consultationContent.classList.add("scale-100", "opacity-100");
+	}, 10);
+}
+
+function closeConsultationModal() {
+	if (!consultationModal) return;
+	consultationContent.classList.remove("scale-100", "opacity-100");
+	consultationContent.classList.add("scale-95", "opacity-0");
+	setTimeout(() => {
+		consultationModal.classList.add("hidden");
+		// Reset form on close
+		if (consultationForm) consultationForm.reset();
+		if (consultationSuccess) consultationSuccess.classList.add("hidden");
+	}, 300);
+}
+
+if (btnConsultation) {
+	btnConsultation.addEventListener("click", openConsultationModal);
+}
+if (closeModalBtn) {
+	closeModalBtn.addEventListener("click", closeConsultationModal);
+}
+if (consultationOverlay) {
+	consultationOverlay.addEventListener("click", closeConsultationModal);
+}
+
+if (consultationForm) {
+	consultationForm.addEventListener("submit", (e) => {
+		e.preventDefault();
+		
+		const name = document.getElementById("consult-name").value.trim();
+		const phone = document.getElementById("consult-phone").value.trim();
+		const email = document.getElementById("consult-email").value.trim();
+		
+		// Basic validation
+		if (!name || !phone || !email) {
+			alert("Vui lòng điền đầy đủ thông tin bắt buộc!");
+			return;
+		}
+		
+		// Show success
+		if (consultationSuccess) {
+			consultationSuccess.classList.remove("hidden");
+		}
+		
+		// Close modal after 1.5 seconds
+		setTimeout(() => {
+			closeConsultationModal();
+		}, 1500);
+	});
+}
+

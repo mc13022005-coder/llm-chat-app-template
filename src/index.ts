@@ -70,7 +70,15 @@ Yêu cầu về văn phong:
 - Không dùng câu "Dữ liệu của bạn cho thấy rằng" ở đầu câu trả lời.`;
 
 function classifyIntent(query: string): string {
-	const q = query.toLowerCase();
+	const q = query.toLowerCase().trim();
+
+	const greetingKeywords = ["hi", "hello", "xin chào", "chào bạn", "alo", "chào"];
+	if (greetingKeywords.some((kw) => q === kw || q.startsWith(kw + " ") || q.startsWith(kw + "!") || q.startsWith(kw + ","))) {
+		return "greeting";
+	}
+	if (greetingKeywords.some((kw) => q.includes(kw)) && q.length < 20 && !/\b[a-z]{3}\b/.test(q)) {
+		return "greeting";
+	}
 
 	const identityKeywords = [
 		"là công ty nào", "của công ty nào", "thuộc công ty nào",
@@ -150,63 +158,86 @@ async function handleChatRequest(
 		// Find the last user message
 		const lastUserMessage = messages.slice().reverse().find((m) => m.role === "user");
 		if (lastUserMessage) {
-			// Extract symbol: check for 3 uppercase letters or "mã/cổ phiếu + 3 letters"
-			let symbolMatch = lastUserMessage.content.match(/\b[A-Z]{3}\b/);
-			if (!symbolMatch) {
-				const prefixMatch = lastUserMessage.content.match(/(?:mã|cổ phiếu|cp)\s+([a-zA-Z]{3})\b/i);
-				if (prefixMatch) {
-					symbolMatch = [prefixMatch[1].toUpperCase()];
+			const intent = classifyIntent(lastUserMessage.content);
+			console.log(`[DEBUG] Intent: ${intent}`);
+
+			if (intent === "greeting") {
+				lastUserMessage.content += `\n\n[HỆ THỐNG]: Người dùng đang chào hỏi. Bạn PHẢI trả lời chính xác như sau: "Xin chào! Mình là SSI Stock Assistant. Bạn muốn tìm hiểu mã cổ phiếu nào hôm nay?" Tuyệt đối KHÔNG tự ý phân tích mã cổ phiếu nào.`;
+			} else {
+				// Extract symbol: check for 3 uppercase letters or "mã/cổ phiếu + 3 letters"
+				let symbolMatch = lastUserMessage.content.match(/\b[A-Z]{3}\b/);
+				if (!symbolMatch) {
+					const prefixMatch = lastUserMessage.content.match(/(?:mã|cổ phiếu|cp)\s+([a-zA-Z]{3})\b/i);
+					if (prefixMatch) {
+						symbolMatch = [prefixMatch[1].toUpperCase()];
+					}
 				}
-			}
 
-			if (symbolMatch) {
-				const symbol = symbolMatch[0].toUpperCase();
-				console.log(`[DEBUG] Nhận diện mã cổ phiếu: ${symbol}`);
-				const baseUrl =
-					env.STOCK_API_BASE_URL ||
-					env.VITE_API_BASE_URL ||
-					"https://stockgpt-backend.onrender.com";
-				const endpoint = `${baseUrl}/stock/${symbol}/company`;
-				console.log(`[DEBUG] Gọi backend URL: ${endpoint}`);
+				// Context check: If no symbol found in current message, look back at recent user messages
+				if (!symbolMatch) {
+					for (let i = messages.length - 2; i >= 0; i--) {
+						const m = messages[i];
+						if (m.role === "user" || m.role === "assistant") {
+							let mMatch = m.content.match(/\b[A-Z]{3}\b/);
+							if (!mMatch) {
+								const mPrefixMatch = m.content.match(/(?:mã|cổ phiếu|cp)\s+([a-zA-Z]{3})\b/i);
+								if (mPrefixMatch) {
+									mMatch = [mPrefixMatch[1].toUpperCase()];
+								}
+							}
+							if (mMatch) {
+								symbolMatch = [mMatch[0].toUpperCase()];
+								console.log(`[DEBUG] Found symbol ${symbolMatch[0]} from context`);
+								break;
+							}
+						}
+					}
+				}
 
-				try {
-					const stockRes = await fetch(endpoint).catch(err => {
-						console.error(`[DEBUG] Lỗi fetch network: ${err.message}`);
-						throw new Error(`Không kết nối được backend tại ${baseUrl}. Bạn đã chạy backend chưa?`);
-					});
+				if (symbolMatch) {
+					const symbol = symbolMatch[0].toUpperCase();
+					console.log(`[DEBUG] Nhận diện mã cổ phiếu: ${symbol}`);
+					const baseUrl =
+						env.STOCK_API_BASE_URL ||
+						env.VITE_API_BASE_URL ||
+						"https://stockgpt-backend.onrender.com";
+					const endpoint = `${baseUrl}/stock/${symbol}/company`;
+					console.log(`[DEBUG] Gọi backend URL: ${endpoint}`);
 
-					console.log(`[DEBUG] Backend status: ${stockRes.status}`);
+					try {
+						const stockRes = await fetch(endpoint).catch(err => {
+							console.error(`[DEBUG] Lỗi fetch network: ${err.message}`);
+							throw new Error(`Không kết nối được backend tại ${baseUrl}. Bạn đã chạy backend chưa?`);
+						});
 
-					if (!stockRes.ok) {
-						let errorText = await stockRes.text();
-						
-						if (stockRes.status === 403 || errorText.includes("1003")) {
-							console.error(`[DEBUG] Bị Cloudflare chặn (403/1003): ${errorText}`);
-							throw new Error("Backend online chưa được cấu hình. Hiện tại bản web online chưa thể gọi backend local. Vui lòng deploy backend FastAPI lên Render/Railway rồi cấu hình STOCK_API_BASE_URL.");
+						console.log(`[DEBUG] Backend status: ${stockRes.status}`);
+
+						if (!stockRes.ok) {
+							let errorText = await stockRes.text();
+							
+							if (stockRes.status === 403 || errorText.includes("1003")) {
+								console.error(`[DEBUG] Bị Cloudflare chặn (403/1003): ${errorText}`);
+								throw new Error("Backend online chưa được cấu hình. Hiện tại bản web online chưa thể gọi backend local. Vui lòng deploy backend FastAPI lên Render/Railway rồi cấu hình STOCK_API_BASE_URL.");
+							}
+
+							try {
+								const errJson = JSON.parse(errorText);
+								if (errJson.error) errorText = errJson.error;
+								else if (errJson.detail) errorText = errJson.detail;
+							} catch (e) {
+								// fallback to raw text
+							}
+							console.error(`[DEBUG] Backend error ${stockRes.status}: ${errorText}`);
+							throw new Error(`Backend trả status ${stockRes.status}: ${errorText}`);
+						}
+						const stockData = await stockRes.text();
+						if (!stockData || stockData.trim() === "" || stockData.trim() === "null") {
+							throw new Error("Không nhận diện được dữ liệu (empty/null)");
 						}
 
-						try {
-							const errJson = JSON.parse(errorText);
-							if (errJson.error) errorText = errJson.error;
-							else if (errJson.detail) errorText = errJson.detail;
-						} catch (e) {
-							// fallback to raw text
-						}
-						console.error(`[DEBUG] Backend error ${stockRes.status}: ${errorText}`);
-						throw new Error(`Backend trả status ${stockRes.status}: ${errorText}`);
-					}
-					const stockData = await stockRes.text();
-					if (!stockData || stockData.trim() === "" || stockData.trim() === "null") {
-						throw new Error("Không nhận diện được dữ liệu (empty/null)");
-					}
-
-					// Classify intent
-					const intent = classifyIntent(lastUserMessage.content);
-					console.log(`[DEBUG] Intent: ${intent}`);
-
-					let intentPrompt = "";
-					if (intent === "company_identity") {
-						intentPrompt = `\n\n[YÊU CẦU ĐẶC BIỆT LÀM THEO INTENT]:
+						let intentPrompt = "";
+						if (intent === "company_identity") {
+							intentPrompt = `\n\n[YÊU CẦU ĐẶC BIỆT LÀM THEO INTENT]:
 1. Người dùng chỉ hỏi nhận diện công ty. Hãy trả lời NGẮN GỌN (120-180 từ).
 2. Format bắt buộc:
 "Mã cổ phiếu ${symbol} thuộc [Tên đầy đủ của công ty]."
@@ -217,36 +248,40 @@ Một số thông tin chính:
 - Mô tả ngắn: ...
 3. TUYỆT ĐỐI KHÔNG đưa các thông tin tài chính (giá, ROA, ROE, doanh thu, lợi nhuận, khuyến nghị) vào câu trả lời này.
 4. Cuối câu trả lời, HÃY HỎI: "Bạn có muốn xem thêm tình hình tài chính, rủi ro hay cổ tức của ${symbol} không?"`;
-					} else if (intent === "stock_analysis") {
-						intentPrompt = `\n\n[YÊU CẦU ĐẶC BIỆT TỪ HỆ THỐNG]: Người dùng yêu cầu phân tích tổng quan.
+						} else if (intent === "stock_analysis") {
+							intentPrompt = `\n\n[YÊU CẦU ĐẶC BIỆT TỪ HỆ THỐNG]: Người dùng yêu cầu phân tích tổng quan.
 Hãy ÁP DỤNG NGHIÊM NGẶT cấu trúc 9 phần đã quy định trong SYSTEM PROMPT (từ Lời chào ngắn đến Disclaimer).
 - Trình bày đầy đủ 9 phần, sử dụng tiêu đề rõ ràng.
 - Tuyệt đối không dùng câu "Dữ liệu của bạn cho thấy rằng".
 - Nếu thiếu dữ liệu tài chính, hãy chèn đúng câu: "Hiện hệ thống chưa có đủ dữ liệu tài chính chi tiết để đánh giá sâu phần này."`;
-					} else {
-						intentPrompt = `\n\n[Yêu cầu]: Hãy trả lời dựa trên dữ liệu trên. Trả lời đúng trọng tâm câu hỏi (nếu hỏi tài chính thì xoáy sâu vào tài chính, hỏi rủi ro thì nói rủi ro). KHÔNG được tự bịa số liệu. KHÔNG nhồi nhét toàn bộ dữ liệu nếu người dùng không hỏi.`;
-					}
+						} else {
+							intentPrompt = `\n\n[Yêu cầu]: Hãy trả lời dựa trên dữ liệu trên. Trả lời đúng trọng tâm câu hỏi (nếu hỏi tài chính thì xoáy sâu vào tài chính, hỏi rủi ro thì nói rủi ro). KHÔNG được tự bịa số liệu. KHÔNG nhồi nhét toàn bộ dữ liệu nếu người dùng không hỏi.`;
+						}
 
-					// Append the data to the user's prompt so the AI can use it
-					lastUserMessage.content += `\n\n[Dữ liệu hệ thống cung cấp từ vnstock cho mã ${symbol}]:\n${stockData}${intentPrompt}`;
-				} catch (err: any) {
-					console.error(`[ERROR] Lỗi gọi backend API cho mã ${symbol}:`, err);
-					
-					let errorMsg = err.message || "Lỗi không xác định khi lấy dữ liệu";
-					
-					if (errorMsg.includes("1003") || errorMsg.includes("403")) {
-						errorMsg = "Backend online chưa được cấu hình. Hiện tại bản web online chưa thể gọi backend local. Vui lòng deploy backend FastAPI lên Render/Railway rồi cấu hình STOCK_API_BASE_URL.";
+						// Append the data to the user's prompt so the AI can use it
+						lastUserMessage.content += `\n\n[Dữ liệu hệ thống cung cấp từ vnstock cho mã ${symbol}]:\n${stockData}${intentPrompt}`;
+					} catch (err: any) {
+						console.error(`[ERROR] Lỗi gọi backend API cho mã ${symbol}:`, err);
+						
+						let errorMsg = err.message || "Lỗi không xác định khi lấy dữ liệu";
+						
+						if (errorMsg.includes("1003") || errorMsg.includes("403")) {
+							errorMsg = "Backend online chưa được cấu hình. Hiện tại bản web online chưa thể gọi backend local. Vui lòng deploy backend FastAPI lên Render/Railway rồi cấu hình STOCK_API_BASE_URL.";
+						}
+						
+						// Return SSE format directly without calling AI
+						const sseData = `data: ${JSON.stringify({ response: `Lỗi: ${errorMsg}` })}\n\ndata: [DONE]\n\n`;
+						return new Response(sseData, {
+							headers: {
+								"content-type": "text/event-stream; charset=utf-8",
+								"cache-control": "no-cache",
+								connection: "keep-alive",
+							},
+						});
 					}
-					
-					// Return SSE format directly without calling AI
-					const sseData = `data: ${JSON.stringify({ response: `Lỗi: ${errorMsg}` })}\n\ndata: [DONE]\n\n`;
-					return new Response(sseData, {
-						headers: {
-							"content-type": "text/event-stream; charset=utf-8",
-							"cache-control": "no-cache",
-							connection: "keep-alive",
-						},
-					});
+				} else {
+					// No symbol found and not a greeting
+					lastUserMessage.content += `\n\n[HỆ THỐNG]: Câu hỏi này KHÔNG chứa mã cổ phiếu nào. Bạn PHẢI trả lời chính xác: "Bạn muốn mình phân tích mã cổ phiếu nào? Ví dụ: FPT, HPG, VIB." Tuyệt đối KHÔNG tự phân tích mã mặc định (như VNM, VIB, FPT) khi người dùng chưa cung cấp.`;
 				}
 			}
 		}
