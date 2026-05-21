@@ -6,6 +6,10 @@
 <title>SSI Stock Assistant</title>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700;800&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <script id="tailwind-config">
@@ -188,11 +192,13 @@
 </button>
 </div>
 <!-- Navigation Items -->
-<nav class="flex-1 space-y-1.5 scrollbar-hide overflow-y-auto">
-<a class="flex items-center gap-3 px-3 py-2.5 text-tertiary bg-white/5 font-semibold rounded-xl transition-all cursor-pointer" onclick="location.reload()">
+<nav class="flex-1 space-y-1.5 scrollbar-hide overflow-y-auto" id="sidebar-nav">
+<a id="btn-new-chat" class="flex items-center gap-3 px-3 py-2.5 text-tertiary bg-white/5 font-semibold rounded-xl transition-all cursor-pointer">
 <span class="material-symbols-outlined" data-icon="chat">chat</span>
 <span class="hidden lg:block font-body-sm text-body-sm">New Chat</span>
 </a>
+<!-- Dynamic Chat List Container -->
+<div id="chat-history-list" class="space-y-1 mt-4 pt-4 border-t border-white/10 hidden lg:block"></div>
 </nav>
 <div class="px-2 mt-4 mb-2">
 <button id="btn-consultation" class="w-full flex items-center justify-center gap-3 px-3 py-3 bg-gradient-to-r from-tertiary to-[#d4af37] text-on-tertiary hover:scale-[1.02] active:scale-95 transition-all rounded-xl font-bold shadow-lg shadow-tertiary/20">
@@ -356,8 +362,26 @@
             </button>
         </form>
         <div class="mt-6 text-center">
-            <p class="text-sm font-medium text-tertiary mb-2">Hoặc liên hệ trực tiếp: Zalo 0348 520 023</p>
+            <p class="text-sm font-medium text-tertiary mb-2">Hoặc liên hệ trực tiếp: Zalo 0982767328</p>
             <p class="text-[10px] text-on-surface-variant/60 uppercase tracking-wider">Thông tin của bạn được bảo mật và chỉ dùng cho mục đích tư vấn.</p>
+        </div>
+    </div>
+</div>
+<!-- Logout Confirmation Modal -->
+<div id="logout-modal" class="fixed inset-0 z-[100] hidden flex items-center justify-center px-4">
+    <div id="logout-overlay" class="absolute inset-0 bg-black/60 backdrop-blur-sm cursor-pointer"></div>
+    <div class="relative bg-surface-container-high border border-white/10 rounded-2xl p-6 md:p-8 w-full max-w-sm shadow-2xl z-10 transform scale-95 opacity-0 transition-all duration-300" id="logout-content">
+        <h3 class="text-xl font-display-lg font-bold text-on-surface mb-2">Xác nhận đăng xuất</h3>
+        <p class="text-sm text-on-surface-variant mb-6 leading-relaxed">
+            Bạn có chắc chắn muốn đăng xuất khỏi tài khoản này không?
+        </p>
+        <div class="flex gap-3">
+            <button id="btn-logout-cancel" class="flex-1 py-3 bg-white/5 hover:bg-white/10 text-on-surface border border-white/10 rounded-xl font-semibold transition-all active:scale-95">
+                Hủy
+            </button>
+            <button id="btn-logout-confirm" class="flex-1 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl font-bold shadow-lg transition-all active:scale-95">
+                Đăng xuất
+            </button>
         </div>
     </div>
 </div>
